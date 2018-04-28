@@ -16,14 +16,21 @@ def simple_upload(request):
         uploaded_file_url = fs.url(filename)
 
         psave = os.getcwd()+'/cup_detection/static/images/pics/'
-        do_detection(path_to_save=psave, debug=False)
+        if not os.path.exists(psave):
+            os.makedirs(psave)
+            
+        do_detection(path_to_save_img=psave, debug=False)
 
         images_list = sorted(glob.glob('cup_detection/static/images/pics/*'))
         for i in range(len(images_list)) :
             images_list[i] = images_list[i][len('cup_detection/static/') : len(images_list[i])]
 
+        output_file_url = fs.url('output.avi')
+        #output_file_url = fs.url('/output.avi')
+
         return render(request, 'cup_detection/index.html', {
             'uploaded_file_url': uploaded_file_url,
+            'output_file_url': output_file_url,
             'images_list' : images_list
         })
     return render(request, 'cup_detection/index.html')
